@@ -26,20 +26,6 @@ void deleteLineFromSubjectFile(char *filename, int lineToDelete) {
     rename("resources/temp.txt", filename);
 }
 
-void displaySubjects() {
-    FILE *file = fopen("resources/subjects.txt", "r");
-    int count = 0;
-    char line[100];
-
-    printf("Which Subject do you want to delete? \n");
-    while (fgets(line, sizeof(line), file) != NULL) {
-        sscanf(line, "%[^!]!", line);
-        printf("%d. %s\n", count + 1, line);
-        count++;
-    }
-    fclose(file);
-}
-
 int chooseSubject(FILE *file) {
     int count = 0;
     char line[100];
@@ -63,7 +49,6 @@ int chooseSubject(FILE *file) {
     }
     return choice;
 }
-
 
 void deleteSubject(int choice) {
     FILE *file = fopen("resources/subjects.txt", "r");
