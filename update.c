@@ -20,7 +20,6 @@ struct Subject {
     char quizFileName[MAX_QUIZ_NAME];
 };
 
-// Function prototypes
 void updateSubject();
 void renderQuestions(char *quizFileName);
 void updateQuestion(char *quizFileName, int questionNumber);
