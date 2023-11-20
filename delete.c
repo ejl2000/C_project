@@ -61,7 +61,7 @@ void deleteSubject(int choice) {
             sscanf(line, "%*[^!]!%s", line);
             deleteQuizQuestion(line);
             deleteLineFromSubjectFile("resources/subjects.txt", choice);
-            printf("Deleted subject: %s\n", line);
+            printf("Successfully deleted.");
             break;
         }
     }
