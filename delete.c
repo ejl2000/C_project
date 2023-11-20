@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <string.h>
-#include <stdbool.h>
 
 void deleteQuizQuestion(char *quizFileName) {
     char filePath[150] = "resources/quizzes/";
@@ -41,22 +40,30 @@ void displaySubjects() {
     fclose(file);
 }
 
-int askUserForSubject(int count) {
-    int choice;
-    bool validChoice = false;
+int chooseSubject(FILE *file) {
+    int count = 0;
+    char line[100];
+    int choice = 0;
 
-    while (!validChoice) {
-        printf("Enter the number of the subject to delete: ");
-        if (scanf("%d", &choice) != 1 || choice < 1 || choice > count) {
-            printf("Please enter a valid number.\n");
-            while (getchar() != '\n'); // Clear input buffer
-        } else {
-            validChoice = true;
-        }
+    printf("Which Subject do you want to delete? \n");
+    while (fgets(line, sizeof(line), file) != NULL) {
+        sscanf(line, "%[^!]!", line);
+        printf("%d. %s\n", count + 1, line);
+        count++;
     }
 
+    while (1) {
+        printf("Enter the number of the subject to delete: ");
+        if (scanf("%d", &choice) != 1 || choice < 1 || choice > count) {
+            printf("Please enter a valid number between 1 and %d.\n", count);
+            while (getchar() != '\n');
+        } else {
+            break;
+        }
+    }
     return choice;
 }
+
 
 void deleteSubject(int choice) {
     FILE *file = fopen("resources/subjects.txt", "r");
@@ -77,18 +84,16 @@ void deleteSubject(int choice) {
 }
 
 int main() {
-    displaySubjects();
-
-    FILE *file = fopen("resources/subjects.txt", "r");
-    int count = 0;
-    char line[100];
-    while (fgets(line, sizeof(line), file) != NULL) {
-        count++;
+    FILE *file = fopen("resources/subjects.txt", "r+");
+    if (file == NULL) {
+        printf("Subject file cannot be opened.\n");
+        return 1;
     }
-    fclose(file);
 
-    int choice = askUserForSubject(count);
+    int choice = chooseSubject(file);
     deleteSubject(choice);
 
+    fclose(file);
     return 0;
 }
+
