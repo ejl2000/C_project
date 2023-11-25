@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#define SCREEN_CLEARING 1
+#define SCREEN_CLEARING 0
 #define MAX_INPUT_LENGTH 100
 
 //Temporary Question Struct
@@ -78,6 +78,83 @@ struct Question getQuestion(char * subject) {
     newQuestion.number = 2;
     strcpy_s(newQuestion.content, 100, "What's one plus one?");
     strcpy_s(newQuestion.answer, 100, "Two.");
+
+    return newQuestion;
+}
+
+void deleteSubjectMenu() {
+    if (SCREEN_CLEARING) {
+        system("cls");
+    }
+
+    char subject[MAX_INPUT_LENGTH];
+    char input[MAX_INPUT_LENGTH];
+    char confirmation[] = "confirm";
+
+    printf("======================\n");
+    printf("=== Delete Subject ===\n");
+    printf("======================\n\n");
+
+    printf("Subject: ");
+    scanf("%s", subject);
+
+    printf("\nType 'confirm' to confirm.\n");
+    scanf("%s", input);
+
+    if (strcmp(input, confirmation) == 0) {
+        printf("Deleting %s...", subject);//call to delete subject
+    }
+}
+
+struct Question editQuestionMenu() {
+    if (SCREEN_CLEARING) {
+        system("cls");
+    }
+
+    char subject[MAX_INPUT_LENGTH];
+    char questionNumber[MAX_INPUT_LENGTH];
+    char input[MAX_INPUT_LENGTH];
+
+    printf("=====================\n");
+    printf("=== Edit Question ===\n");
+    printf("=====================\n\n");
+
+    printf("Subject: ");
+    scanf("%s", subject);
+    printf("Question Number: ");
+    scanf("%s", questionNumber);
+
+
+    struct Question oldQuestion = getQuestion(subject);
+    struct Question newQuestion;
+    newQuestion.number = oldQuestion.number;
+
+    printf("\n\n[ Question %d ]\n", oldQuestion.number);
+    printf("%s --- Change[Y/N] ", oldQuestion.content);
+    scanf("%s", input);
+
+    fflush(stdin);
+
+    if (strcmp(input, "Y") == 0) {
+        printf("\nNew Content: \n");
+        fgets(input, MAX_INPUT_LENGTH, stdin);
+        strcpy(newQuestion.content, input);
+    } else {
+        strcpy(newQuestion.content, oldQuestion.content);
+    }
+
+    printf("\n%s --- Change[Y/N] ", oldQuestion.answer);
+    scanf("%s", input);
+
+    fflush(stdin);
+
+    if (strcmp(input, "Y") == 0) {
+        printf("\nNew Answer: \n");
+        fgets(input, MAX_INPUT_LENGTH, stdin);
+        strcpy(newQuestion.answer, input);
+    } else {
+        strcpy(newQuestion.answer, oldQuestion.answer);
+    }
 
     return newQuestion;
 }
@@ -209,9 +286,10 @@ void menu() {
             struct Question new = addQuestionMenu();
             //call to addQuestion(new); *NEEDS A SUBJECT
         } else if (strcmp(input, editQuestionCode) == 0) {
-
+            struct Question newQuestion = editQuestionMenu();
+            //update question with newQuestion
         } else if (strcmp(input, deleteSubjectCode) == 0) {
-
+            deleteSubjectMenu();
         } else if (strcmp(input, playQuizCode) == 0) {
             quizMenu();
         } else if (strcmp(input, exitCode) == 0) {
