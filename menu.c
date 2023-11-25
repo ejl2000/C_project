@@ -1,5 +1,5 @@
 //
-// Created by wifir on 2023-11-18.
+// Created by Quinn Thompson on 2023-11-18.
 //
 #include <stdio.h>
 #include <string.h>
@@ -75,7 +75,7 @@ struct Question addQuestionMenu() {
 
 struct Question getQuestion(char * subject) {
     struct Question newQuestion;
-    newQuestion.number = 1;
+    newQuestion.number = 2;
     strcpy_s(newQuestion.content, 100, "What's one plus one?");
     strcpy_s(newQuestion.answer, 100, "Two.");
 
@@ -83,26 +83,45 @@ struct Question getQuestion(char * subject) {
 }
 
 void printQuestion(struct Question question) {
-    //question parameter should be type struct(?)
-
+    if (SCREEN_CLEARING) {
+        system("cls");
+    }
     printf("[ Question %d ]\n", question.number);
     printf("%s\n\n", question.content);
 
-    printf("1) View Answer\n"); //"Flip"?
-    printf("2) Previous\n"); //only display if question.number != 1
-    printf("3) Next\n\n"); //only display if question.number < total questions
+    printf("1) View Answer\n");
+    //placeholder; replace 100 with the number of questions for the current subject
+    if (question.number > 1 && question.number < 100) {
+        printf("2) Previous\n");
+        printf("3) Next\n");
+    } else if (question.number == 100) { //&& 1 != max question number
+        printf("2) Previous\n");
+    } else if (question.number == 1){ //&& 1 != max question number
+        printf("2) Next\n");
+    }
 
-    printf("Option: ");
+    printf("\nOption: ");
 }
 
 void printAnswer(struct Question question) {
-    printf("[ Question %d ]\n", question.number);
+    if (SCREEN_CLEARING) {
+        system("cls");
+    }
+    printf("[ Answer %d ]\n", question.number);
     printf("%s\n\n", question.answer);
 
-    printf("1) Previous\n"); //only display if question.number != 1
-    printf("2) Next\n\n"); //only display if question.number < total questions
+    printf("1) Hide Answer\n");
 
-    printf("Option: ");
+    //placeholder; replace 100 with the number of questions for the current subject
+    if (question.number > 1 && question.number < 100) {
+        printf("2) Previous\n");
+        printf("3) Next\n");
+    } else if (question.number == 100) { //&& 1 != max question number
+        printf("2) Previous\n");
+    } else if (question.number == 1){ //&& 1 != max question number
+        printf("2) Next\n");
+    }
+    printf("\nOption: ");
 }
 
 void quizMenu() {
@@ -112,6 +131,7 @@ void quizMenu() {
 
     char subject[MAX_INPUT_LENGTH];
     int running = 1;
+    int isAnswer = 0;
 
     printf("==================\n");
     printf("=== Quiz Mode! ===\n");
@@ -128,31 +148,39 @@ void quizMenu() {
     char viewAnswerCode[2] = "1";
     char backCode[2] = "2";
     char nextCode[2] = "3";
+    char exitCode[5] = "back";
 
     do {
-        printQuestion(question);
+        if (isAnswer) {
+            printAnswer(question);
+        } else {
+            printQuestion(question);
+        }
         scanf("%s", input);
 
-        /*
         if (question.number == 1) {
             nextCode[0] = '2';
             backCode[0] = '\0';
-        } else if (question.number == question.max) {
+        } else if (question.number == 100) {
             nextCode[0] = '\0';
             backCode[0] = '2';
         } else {
-            nextCode[0] = '2';
-            backCode[0] = '3';
+            nextCode[0] = '3';
+            backCode[0] = '2';
         }
-         */
 
         if (strcmp(input, viewAnswerCode) == 0) {
-            printAnswer(question);
-            scanf("%s", input);
+            isAnswer = !isAnswer;
         } else if (strcmp(input, backCode) == 0) {
             //question = "previous question";
+            printf("<< GET PREV QUESTION >>");
+            question.number--;
         } else if (strcmp(input, nextCode) == 0) {
             //question = "next question";
+            printf("<< GET NEXT QUESTION >>");
+            question.number++;
+        } else if (strcmp(input, exitCode) == 0) {
+            running = 0;
         }
     } while (running);
 }
