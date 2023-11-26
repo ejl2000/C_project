@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#define SCREEN_CLEARING 0
+#define SCREEN_CLEARING 1
 #define MAX_INPUT_LENGTH 100
 
 //Temporary Question Struct
@@ -166,7 +166,7 @@ void printQuestion(struct Question question) {
     printf("[ Question %d ]\n", question.number);
     printf("%s\n\n", question.content);
 
-    printf("1) View Answer\n");
+    printf("1) Show Answer\n");
     //placeholder; replace 100 with the number of questions for the current subject
     if (question.number > 1 && question.number < 100) {
         printf("2) Previous\n");
@@ -249,13 +249,9 @@ void quizMenu() {
         if (strcmp(input, viewAnswerCode) == 0) {
             isAnswer = !isAnswer;
         } else if (strcmp(input, backCode) == 0) {
-            //question = "previous question";
-            printf("<< GET PREV QUESTION >>");
-            question.number--;
+            question = getQuestion(subject);//get previous question
         } else if (strcmp(input, nextCode) == 0) {
-            //question = "next question";
-            printf("<< GET NEXT QUESTION >>");
-            question.number++;
+            question = getQuestion(subject);//get next question
         } else if (strcmp(input, exitCode) == 0) {
             running = 0;
         }
@@ -284,7 +280,7 @@ void menu() {
             printf("<< call to addSubject with '%s' as input >>\n", input);
         } else if (strcmp(input, addQuestionCode) == 0) {
             struct Question new = addQuestionMenu();
-            //call to addQuestion(new); *NEEDS A SUBJECT
+            //call to addQuestion(new)
         } else if (strcmp(input, editQuestionCode) == 0) {
             struct Question newQuestion = editQuestionMenu();
             //update question with newQuestion
