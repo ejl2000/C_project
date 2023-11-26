@@ -19,11 +19,12 @@ void deleteLineFromSubjectFile(char *filename, int lineToDelete) {
         }
     }
 
+
     fclose(file);
     fclose(tempFile);
 
-    remove(filename);
-    rename("resources/temp.txt", filename);
+    remove("resources/subjects.txt");
+    rename("resources/temp.txt", "resources/subjects.txt");
 }
 
 int chooseSubject(FILE *file) {
@@ -60,25 +61,27 @@ void deleteSubject(int choice) {
         if (count == choice) {
             sscanf(line, "%*[^!]!%s", line);
             deleteQuizQuestion(line);
+            fclose(file);
             deleteLineFromSubjectFile("resources/subjects.txt", choice);
             printf("Successfully deleted.");
             break;
         }
     }
-    fclose(file);
+
 }
 
-int main() {
+void deleteSubjectMain() {
     FILE *file = fopen("resources/subjects.txt", "r+");
     if (file == NULL) {
         printf("Subject file cannot be opened.\n");
-        return 1;
+        return;
     }
 
     int choice = chooseSubject(file);
+    fclose(file);
     deleteSubject(choice);
 
-    fclose(file);
-    return 0;
+
+
 }
 

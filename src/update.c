@@ -1,39 +1,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "common.h"
+#include "update.h"
 
-#define MAX_SUBJECT_NAME 50
-#define MAX_QUIZ_NAME 50
-#define MAX_QUESTION 100
-#define MAX_ANSWER 100
-#define MAX_LINE 200
 
-// Struct to represent a Quiz question
-struct Quiz {
-    char question[MAX_QUESTION];
-    char answer[MAX_ANSWER];
-};
-
-// Struct to represent a Subject
-struct Subject {
-    char subjectName[MAX_SUBJECT_NAME];
-    char quizFileName[MAX_QUIZ_NAME];
-};
 
 void updateSubject();
 void renderQuestions(char *quizFileName);
 void updateQuestion(char *quizFileName, int questionNumber);
 
-int main() {
-    updateSubject();
-
-    return 0;
-}
 
 void updateSubject() {
-    char subject[MAX_SUBJECT_NAME];
+    char subject_name[MAX_SUBJECT_LENGTH];
     printf("Enter the subject to update: ");
-    scanf("%s", subject);
+    scanf("%s", subject_name);
 
     // Open subjects.txt to find the corresponding quiz file
     FILE *subjectsFile = fopen("resources/subjects.txt", "r");
@@ -42,9 +23,10 @@ void updateSubject() {
         exit(1);
     }
 
-    char quizFileName[MAX_QUIZ_NAME];
-    while (fscanf(subjectsFile, "%[^!]!%s", quizFileName, quizFileName) == 2) {
-        if (strcmp(subject, quizFileName) == 0) {
+    char quizFileName[MAX_QUIZ_LENGTH];
+    char subjectFileName[MAX_SUBJECT_LENGTH];
+    while (fscanf(subjectsFile, "%[^!]!%s", subjectFileName, quizFileName) == 2) {
+        if (strcmp(subject_name, subjectFileName) == 0) {
             renderQuestions(quizFileName);
             fclose(subjectsFile);
             return;
@@ -56,7 +38,9 @@ void updateSubject() {
 }
 
 void renderQuestions(char *quizFileName) {
-    FILE *quizFile = fopen(strcat("resources/quizzes/", quizFileName), "r");
+    char filePath[MAX_QUIZ_LENGTH+20];  // Ensure this is large enough
+    snprintf(filePath, sizeof(filePath), "resources/quizzes/%s", quizFileName);
+    FILE *quizFile = fopen(filePath, "r");
     if (quizFile == NULL) {
         printf("Error opening quiz file %s\n", quizFileName);
         exit(1);
@@ -94,7 +78,9 @@ void renderQuestions(char *quizFileName) {
 }
 
 void updateQuestion(char *quizFileName, int questionNumber) {
-    FILE *quizFile = fopen(strcat("resources/quizzes/", quizFileName), "r+");
+    char filePath[MAX_QUIZ_LENGTH+20];  // Ensure this is large enough
+    snprintf(filePath, sizeof(filePath), "resources/quizzes/%s", quizFileName);
+    FILE *quizFile = fopen(filePath, "r+");
     if (quizFile == NULL) {
         printf("Error opening quiz file %s\n", quizFileName);
         exit(1);

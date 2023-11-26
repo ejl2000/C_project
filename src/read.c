@@ -1,14 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-struct QuizItem {
-    char *question;
-    char *answer;
-};
+#include "common.h"
 
 
-void displayQuestionAndOptions(struct QuizItem *quizItems, int index, int itemCount) {
+
+
+void displayQuestionAndOptions(struct Quiz *quizItems, int index, int itemCount) {
     printf("-------------------------------------------");
     printf("\nQuestion: %s\n", quizItems[index].question);
     printf("Select one of the following options: \n");
@@ -32,7 +30,7 @@ char getUserChoice() {
 }
 
 
-int processUserChoice(struct QuizItem *quizItems, int itemCount, int *currentIndex, char userChoice) {
+int processUserChoice(struct Quiz *quizItems, int itemCount, int *currentIndex, char userChoice) {
     switch (userChoice) {
         case 'v':
             printf("Answer: %s\n", quizItems[*currentIndex].answer);
@@ -56,7 +54,7 @@ int processUserChoice(struct QuizItem *quizItems, int itemCount, int *currentInd
     return 1; // Continue the quiz
 }
 
-void cleanupQuizItems(struct QuizItem *quizItems, int itemCount) {
+void cleanupQuizItems(struct Quiz *quizItems, int itemCount) {
     for (int i = 0; i < itemCount; i++) {
         free(quizItems[i].question);
         free(quizItems[i].answer);
@@ -64,7 +62,7 @@ void cleanupQuizItems(struct QuizItem *quizItems, int itemCount) {
     free(quizItems);
 }
 
-void readQuizContents(struct QuizItem *quizItems, int itemCount) {
+void readQuizContents(struct Quiz *quizItems, int itemCount) {
     int currentIndex = 0, result;
     char userChoice;
 
@@ -94,28 +92,28 @@ void getQuizPath(FILE* subjectsPtr, char* quizPath, int fileSize) {
     strcat(quizPath, quizFileName);
 }
 
-int loadQuizItems(FILE *quizFile, struct QuizItem **quizItems) {
+int loadQuizItems(FILE *quizFile, struct Quiz **quizItems) {
     size_t initialSizeBytes = 0;
     char *line = NULL;
     int itemCount = 0, capacity = 10; // set some initial capacity for the array
 
-    *quizItems = malloc(sizeof(struct QuizItem) * capacity);
+    *quizItems = malloc(sizeof(struct Quiz) * capacity);
 
-    while (getline(&line, &initialSizeBytes, quizFile) != -1) {
-        // Resize by doubling the array if it's full
-        if (itemCount == capacity) {
-            capacity *= 2;
-            *quizItems = realloc(*quizItems, sizeof(struct QuizItem) * capacity);
-        }
-
-        char *separator = strchr(line, '!');
-        if (separator != NULL) {
-            *separator = '\0'; // Split the line into question and answer
-            (*quizItems)[itemCount].question = strdup(line);
-            (*quizItems)[itemCount].answer = strdup(separator + 1);
-            itemCount++;
-        }
-    }
+//    while (getline(&line, &initialSizeBytes, quizFile) != -1) {
+//        // Resize by doubling the array if it's full
+//        if (itemCount == capacity) {
+//            capacity *= 2;
+//            *quizItems = realloc(*quizItems, sizeof(struct Quiz) * capacity);
+//        }
+//
+//        char *separator = strchr(line, '!');
+//        if (separator != NULL) {
+//            *separator = '\0'; // Split the line into question and answer
+//            strncpy((*quizItems)[itemCount].question, line, MAX_QUESTION - 1);
+//            (*quizItems)[itemCount].question[MAX_QUESTION - 1] = '\0'; // Ensure null termination
+//            itemCount++;
+//        }
+//    }
     free(line);
     return itemCount;
 }
@@ -137,7 +135,7 @@ void startQuiz() {
         exit(EXIT_FAILURE);
     }
 
-    struct QuizItem *quizItems;
+    struct Quiz *quizItems;
     int itemCount = loadQuizItems(quizFilePtr, &quizItems);
     fclose(quizFilePtr);
 
@@ -145,7 +143,7 @@ void startQuiz() {
 }
 
 
-int main() {
-    startQuiz();
-    return 0;
-}
+//int main() {
+//    startQuiz();
+//    return 0;
+//}
