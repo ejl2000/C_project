@@ -124,7 +124,7 @@ void startQuiz() {
     char quizPath[100] = "resources/quizzes/";
     getQuizPath(subjectsFilePtr, quizPath, sizeof(quizPath));
     fclose(subjectsFilePtr);
-
+    printf("%s",quizPath);
     FILE* quizFilePtr = fopen(quizPath, "r");
     if (!quizFilePtr) {
         perror("Failed to open quiz file");
