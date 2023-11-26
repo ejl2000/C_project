@@ -4,8 +4,6 @@
 #include "common.h"
 
 
-
-
 void displayQuestionAndOptions(struct Quiz *quizItems, int index, int itemCount) {
     printf("-------------------------------------------");
     printf("\nQuestion: %s\n", quizItems[index].question);
@@ -54,12 +52,8 @@ int processUserChoice(struct Quiz *quizItems, int itemCount, int *currentIndex, 
     return 1; // Continue the quiz
 }
 
-void cleanupQuizItems(struct Quiz *quizItems, int itemCount) {
-    for (int i = 0; i < itemCount; i++) {
-        free(quizItems[i].question);
-        free(quizItems[i].answer);
-    }
-    free(quizItems);
+void cleanupQuizItems(struct Quiz *quizItems) {
+    free(quizItems); // Only the array of structs needs to be freed now
 }
 
 void readQuizContents(struct Quiz *quizItems, int itemCount) {
@@ -80,7 +74,7 @@ void readQuizContents(struct Quiz *quizItems, int itemCount) {
         }
     }
 
-    cleanupQuizItems(quizItems, itemCount);
+    cleanupQuizItems(quizItems);
 }
 
 void getQuizPath(FILE* subjectsPtr, char* quizPath, int fileSize) {
@@ -93,28 +87,30 @@ void getQuizPath(FILE* subjectsPtr, char* quizPath, int fileSize) {
 }
 
 int loadQuizItems(FILE *quizFile, struct Quiz **quizItems) {
-    size_t initialSizeBytes = 0;
-    char *line = NULL;
-    int itemCount = 0, capacity = 10; // set some initial capacity for the array
+    int itemCount = 0, capacity = 10; // initial capacity for the array
+    char buffer[MAX_QUESTION + MAX_ANSWER + 2]; // +2 for the delimiter and newline
 
     *quizItems = malloc(sizeof(struct Quiz) * capacity);
 
-//    while (getline(&line, &initialSizeBytes, quizFile) != -1) {
-//        // Resize by doubling the array if it's full
-//        if (itemCount == capacity) {
-//            capacity *= 2;
-//            *quizItems = realloc(*quizItems, sizeof(struct Quiz) * capacity);
-//        }
-//
-//        char *separator = strchr(line, '!');
-//        if (separator != NULL) {
-//            *separator = '\0'; // Split the line into question and answer
-//            strncpy((*quizItems)[itemCount].question, line, MAX_QUESTION - 1);
-//            (*quizItems)[itemCount].question[MAX_QUESTION - 1] = '\0'; // Ensure null termination
-//            itemCount++;
-//        }
-//    }
-    free(line);
+    while (fgets(buffer, sizeof(buffer), quizFile) != NULL) {
+        // Resize by doubling the array if it's full
+        if (itemCount == capacity) {
+            capacity *= 2;
+            *quizItems = realloc(*quizItems, sizeof(struct Quiz) * capacity);
+        }
+
+        // Assuming each line is "question!answer\n"
+        char *separator = strchr(buffer, '!');
+        if (separator != NULL) {
+            *separator = '\0'; // Split the line into question and answer
+            strncpy((*quizItems)[itemCount].question, buffer, MAX_QUESTION);
+            (*quizItems)[itemCount].question[MAX_QUESTION - 1] = '\0'; // Ensure null-termination
+            strncpy((*quizItems)[itemCount].answer, separator + 1, MAX_ANSWER);
+            char *newline = strchr((*quizItems)[itemCount].answer, '\n');
+            if (newline) *newline = '\0'; // Remove newline if present
+            itemCount++;
+        }
+    }
     return itemCount;
 }
 

@@ -9,14 +9,14 @@
 #include "update.h"
 #include "delete.h"
 #include "read.h"
-#define SCREEN_CLEARING 1
+//#define SCREEN_CLEARING 1
 #define MAX_INPUT_LENGTH 100
 
 
 void mainMenu() {
-    if (SCREEN_CLEARING) {
-        system("cls");
-    }
+//    if (SCREEN_CLEARING) {
+//        system("cls");
+//    }
     printf("=============================\n");
     printf("=== Welcome To QuizMaster ===\n");
     printf("=============================\n\n");
@@ -33,7 +33,6 @@ void mainMenu() {
 
 void addSubjectMenu() {
 
-    system("cls");
 
     printf("====================\n");
     printf("=== Add Subjects ===\n");
@@ -50,9 +49,7 @@ void addSubjectMenu() {
 }
 
 bool boolAddQuestionMenu(struct Subject *new_subject) {
-    if (SCREEN_CLEARING) {
-        system("cls");
-    }
+
 
 
     printf("=====================\n");
@@ -69,6 +66,7 @@ bool boolAddQuestionMenu(struct Subject *new_subject) {
 
     // Check if subject exist
     if (doesSubjectExist(*new_subject)) {
+        sprintf(new_subject->quizFileName, "%s_quizzes.txt", new_subject->subjectName);
         return true;
     } else {
         printf("Subject not found.\n");
@@ -106,6 +104,7 @@ void addQuestionMenu(){
         char input[MAX_INPUT_LENGTH];
         do {
             struct Quiz new_quiz = getNewQuestion();
+            printf("newsubject: %s",new_subject.subjectName);
             addQuiz(new_subject, new_quiz);
 
             printf("Would you like to add more?\n");
@@ -130,26 +129,20 @@ void addQuestionMenu(){
 
 
 void deleteSubjectMenu() {
-    if (SCREEN_CLEARING) {
-        system("cls");
-    }
+
 
     deleteSubjectMain();
 }
 
 void editQuestionMenu() {
-    if (SCREEN_CLEARING) {
-        system("cls");
-    }
+
     updateSubject();
 
 }
 
 
 void quizMenu() {
-    if (SCREEN_CLEARING) {
-        system("cls");
-    }
+
     startQuiz();
 
 }
@@ -169,7 +162,8 @@ void menu() {
     do {
         printf("<< input: '%s' >>\n\n", input);
         mainMenu();
-        scanf("%s", input);
+        fgets(input, sizeof(input), stdin);
+        input[strcspn(input, "\n")] = 0;
         int a = strcmp(input, addSubjectCode);
         if (strcmp(input, addSubjectCode) == 0) {
             addSubjectMenu();

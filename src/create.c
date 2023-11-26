@@ -53,6 +53,7 @@ void addSubject(struct Subject subject) {
             if (lastChar != '\n') {
                 fprintf(file, "\n");
             }
+
         } else {
             fclose(file);
             file = fopen(FILE_NAME, "a");
@@ -62,7 +63,6 @@ void addSubject(struct Subject subject) {
         file = fopen(FILE_NAME, "a");
     }
 
-    char quizFileName[MAX_SUBJECT_LENGTH];
     sprintf(subject.quizFileName, "%s_quizzes.txt", subject.subjectName);
 
     fprintf(file, "%s!%s\n", subject.subjectName, subject.quizFileName);
@@ -71,12 +71,14 @@ void addSubject(struct Subject subject) {
     char pathQuizFileName[MAX_SUBJECT_LENGTH + 25]; // Adjust size for path
     sprintf(pathQuizFileName, "resources/quizzes/%s", subject.quizFileName);
 
+    printf("quiz path: %s",pathQuizFileName);
     // Now handle the quiz file
-    file = fopen(pathQuizFileName, "w");
-    if (file == NULL) {
+    FILE* quizFile = fopen(pathQuizFileName, "w");
+    if (quizFile == NULL) {
         printf("Error creating or clearing quiz file.\n");
         return;
     }
+    fclose(quizFile);
 }
 
 void addQuiz(struct Subject subject, struct Quiz quiz) {
@@ -100,8 +102,9 @@ void addQuiz(struct Subject subject, struct Quiz quiz) {
     }
 
     char pathQuizFileName[MAX_SUBJECT_LENGTH + 25];
+    printf("quiz name: %s\n",subject.quizFileName);
     sprintf(pathQuizFileName, "resources/quizzes/%s", subject.quizFileName);
-
+    printf("quiz path: %s",pathQuizFileName);
     FILE* file = fopen(pathQuizFileName, "r");
 
     if (file != NULL) {
