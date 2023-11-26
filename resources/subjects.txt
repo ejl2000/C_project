@@ -1,1 +1,5 @@
 comp2510!comp2510_quizzes.txt
+acit1234!acit1234_quizzes.txt
+asd!asd_quizzes.txt
+asdad!asdad_quizzes.txt
+2323!2323_quizzes.txt

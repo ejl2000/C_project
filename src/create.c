@@ -70,15 +70,17 @@ void addSubject(struct Subject subject) {
 
     char pathQuizFileName[MAX_SUBJECT_LENGTH + 25]; // Adjust size for path
     sprintf(pathQuizFileName, "resources/quizzes/%s", subject.quizFileName);
-
-    printf("quiz path: %s",pathQuizFileName);
+//    printf("\n%s\n",pathQuizFileName);
     // Now handle the quiz file
-    FILE* quizFile = fopen(pathQuizFileName, "w");
+    FILE* quizFile = fopen(pathQuizFileName, "w+");
     if (quizFile == NULL) {
         printf("Error creating or clearing quiz file.\n");
         return;
     }
+    // Write an empty string to the file
+    fflush(quizFile);
     fclose(quizFile);
+
 }
 
 void addQuiz(struct Subject subject, struct Quiz quiz) {
