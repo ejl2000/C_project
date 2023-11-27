@@ -9,7 +9,5 @@
 #include "common.h"
 
 void updateSubject();
-void renderQuestions(char *quizFileName);
-void updateQuestion(char *quizFileName, int questionNumber);
 
 #endif //C_PROJECT_UPDATE_H

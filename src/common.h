@@ -6,6 +6,7 @@
 #define MAX_QUESTION 100
 #define MAX_ANSWER 100
 
+
 // Struct to represent a Quiz question
 struct Quiz {
     char question[MAX_QUESTION];
