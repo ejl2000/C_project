@@ -3,7 +3,6 @@
 #include <string.h>
 #include "common.h"
 
-
 void displayQuestionAndOptions(struct Quiz *quizItems, int index, int itemCount) {
     printf("-------------------------------------------");
     printf("\nQuestion: %s\n", quizItems[index].question);
@@ -53,7 +52,7 @@ int processUserChoice(struct Quiz *quizItems, int itemCount, int *currentIndex, 
 }
 
 void cleanupQuizItems(struct Quiz *quizItems) {
-    free(quizItems); // Only the array of structs needs to be freed now
+    free(quizItems);
 }
 
 void readQuizContents(struct Quiz *quizItems, int itemCount) {
@@ -77,15 +76,6 @@ void readQuizContents(struct Quiz *quizItems, int itemCount) {
     cleanupQuizItems(quizItems);
 }
 
-void getQuizPath(FILE* subjectsPtr, char* quizPath, int fileSize) {
-    char quizFileName[100];
-
-    while((fgetc(subjectsPtr)) != '!'); // get rid of preceding characters until first char after '!'
-    fgets(quizFileName, fileSize, subjectsPtr);
-
-    strcat(quizPath, quizFileName);
-}
-
 int loadQuizItems(FILE *quizFile, struct Quiz **quizItems) {
     int itemCount = 0, capacity = 10; // initial capacity for the array
     char buffer[MAX_QUESTION + MAX_ANSWER + 2]; // +2 for the delimiter and newline
@@ -93,25 +83,77 @@ int loadQuizItems(FILE *quizFile, struct Quiz **quizItems) {
     *quizItems = malloc(sizeof(struct Quiz) * capacity);
 
     while (fgets(buffer, sizeof(buffer), quizFile) != NULL) {
-        // Resize by doubling the array if it's full
+        // double array if full
         if (itemCount == capacity) {
             capacity *= 2;
             *quizItems = realloc(*quizItems, sizeof(struct Quiz) * capacity);
         }
 
-        // Assuming each line is "question!answer\n"
         char *separator = strchr(buffer, '!');
         if (separator != NULL) {
-            *separator = '\0'; // Split the line into question and answer
+            *separator = '\0'; // split the line into question and answer
             strncpy((*quizItems)[itemCount].question, buffer, MAX_QUESTION);
-            (*quizItems)[itemCount].question[MAX_QUESTION - 1] = '\0'; // Ensure null-termination
+            (*quizItems)[itemCount].question[MAX_QUESTION - 1] = '\0'; // set last character to null terminator
             strncpy((*quizItems)[itemCount].answer, separator + 1, MAX_ANSWER);
             char *newline = strchr((*quizItems)[itemCount].answer, '\n');
-            if (newline) *newline = '\0'; // Remove newline if present
+            if (newline) *newline = '\0'; // remove newline if present
             itemCount++;
         }
     }
     return itemCount;
+}
+
+int displaySubjectsAndGetChoice(FILE *subjectsPtr, int numSubjects) {
+    int choice;
+    char subject[100];
+    int i = 1;
+
+    printf("Select a subject:\n");
+    while (fscanf(subjectsPtr, "%[^!]", subject) == 1) {
+        printf("%d) %s\n", i, subject);
+        fscanf(subjectsPtr, "%*[^\n]");  // skip the rest of the line
+        fgetc(subjectsPtr);
+        i++;
+    }
+
+    numSubjects = i - 1;  // adjust for the last increment
+
+    do {
+        printf("Enter your choice (1-%d): ", numSubjects);
+        if (scanf("%d", &choice) != 1) {
+            printf("Invalid input. Please enter a number.\n");
+            while (getchar() != '\n');
+            choice = -1;  // reset choice until user enters valid option
+        } else if (choice < 1 || choice > numSubjects) {
+            printf("Invalid choice. Please enter a valid option.\n");
+            while (getchar() != '\n');
+        }
+    } while (choice < 1 || choice > numSubjects);
+
+    return choice;
+}
+
+void getQuizFileName(FILE *subjectsPtr, int choice, char *quizFileName, int fileSize) {
+    int i;
+    rewind(subjectsPtr);
+
+    for (i = 1; i <= choice; i++) {
+        fscanf(subjectsPtr, "%*[^!]");  // skip subject name
+        if (i == choice) {
+            fgetc(subjectsPtr);  // skip '!' character
+            fgets(quizFileName, fileSize, subjectsPtr);  // read the quiz file name
+            quizFileName[strcspn(quizFileName, "\n")] = 0;
+            break;
+        }
+        fscanf(subjectsPtr, "%*[^\n]");  // skip the rest of the line
+        fgetc(subjectsPtr);
+    }
+}
+
+void readSelectSubject(FILE *subjectsPtr, char *quizFileName, int fileSize) {
+    int numSubjects = 0;
+    int choice = displaySubjectsAndGetChoice(subjectsPtr, numSubjects);
+    getQuizFileName(subjectsPtr, choice, quizFileName, fileSize);
 }
 
 void startQuiz() {
@@ -121,10 +163,13 @@ void startQuiz() {
         exit(EXIT_FAILURE);
     }
 
-    char quizPath[100] = "resources/quizzes/";
-    getQuizPath(subjectsFilePtr, quizPath, sizeof(quizPath));
+    char quizFileName[100];
+    readSelectSubject(subjectsFilePtr, quizFileName, sizeof(quizFileName));
     fclose(subjectsFilePtr);
-    printf("\n%s\n",quizPath);
+
+    char quizPath[100] = "resources/quizzes/";
+    strcat(quizPath, quizFileName);
+
     FILE* quizFilePtr = fopen(quizPath, "r");
     if (!quizFilePtr) {
         perror("Failed to open quiz file");
@@ -137,6 +182,7 @@ void startQuiz() {
 
     readQuizContents(quizItems, itemCount);
 }
+
 
 
 //int main() {

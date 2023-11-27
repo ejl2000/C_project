@@ -5,13 +5,37 @@
 #include "update.h"
 
 
-
-
 void listQuestions(char *quizFileName);
+
 void updateQuestion(char *quizFileName, int questionNumber);
+
+bool checkQuizValid(struct Quiz quiz) {
+
+// Check if the question is empty
+    if (strlen(quiz.question) == 0 || strlen(quiz.answer) == 0) {
+        printf("Error: Your Question or Answer is empty.\n");
+        return false;
+
+    }
+
+// Check if the question ends with '?'
+    if (quiz.question[strlen(quiz.question) - 1] != '?') {
+        printf("Error: Question must end with '?'.\n");
+        return false;
+    }
+
+// Check if the answer starts with '!'
+    if (quiz.answer[0] == '!') {
+        printf("Error: Answer cannot start with '!'.\n");
+        return false;
+    }
+
+    return true;
+}
+
 void clearInputBuffer() {
     int c;
-    while ((c = getchar()) != '\n' && c != EOF) { }
+    while ((c = getchar()) != '\n' && c != EOF) {}
 }
 
 int selectSubject() {
@@ -134,15 +158,20 @@ void updateQuestion(char *quizFileName, int questionNumber) {
             printf("\nCurrent Question: %s\n", currentQuiz.question);
             printf("Current Answer: %s\n", currentQuiz.answer);
 
-            // Get new question and answer from user
-            printf("\nEnter the new question: ");
-            scanf(" %[^\n]", currentQuiz.question);
-            printf("\nEnter the new answer: ");
-            scanf(" %[^\n]", currentQuiz.answer);
+            do{
+
+                // Get new question and answer from user
+                printf("\nEnter the new question: ");
+                scanf(" %[^\n]", currentQuiz.question);
+                printf("\nEnter the new answer: ");
+                scanf(" %[^\n]", currentQuiz.answer);
+            }while(checkQuizValid(currentQuiz)==false);
+
+
         }
 
         // Write to the temp file
-        fprintf(tempFile, "%s?!%s\n", currentQuiz.question, currentQuiz.answer);
+        fprintf(tempFile, "%s!%s\n", currentQuiz.question, currentQuiz.answer);
         currentQuestionNumber++;
     }
 
