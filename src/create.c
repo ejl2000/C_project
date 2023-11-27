@@ -83,6 +83,7 @@ void addSubject(struct Subject subject) {
 
 }
 
+
 void addQuiz(struct Subject subject, struct Quiz quiz) {
     // Check if the question is empty
     if(strlen(quiz.question)==0 || strlen(quiz.answer)==0){
@@ -104,9 +105,9 @@ void addQuiz(struct Subject subject, struct Quiz quiz) {
     }
 
     char pathQuizFileName[MAX_SUBJECT_LENGTH + 25];
-    printf("quiz name: %s\n",subject.quizFileName);
+//    printf("quiz name: %s\n",subject.quizFileName);
     sprintf(pathQuizFileName, "resources/quizzes/%s", subject.quizFileName);
-    printf("quiz path: %s",pathQuizFileName);
+//    printf("quiz path: %s",pathQuizFileName);
     FILE* file = fopen(pathQuizFileName, "r");
 
     if (file != NULL) {

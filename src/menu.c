@@ -52,19 +52,53 @@ bool boolAddQuestionMenu(struct Subject *new_subject) {
 
 
 
-    printf("=====================\n");
+    printf("\n=====================\n");
     printf("=== Add Questions ===\n");
     printf("=====================\n\n");
 
-    printf("Enter the Subject: \n");
-    fgets(new_subject->subjectName, MAX_SUBJECT_LENGTH, stdin);
-    // Remove newline character if present
-    if (new_subject->subjectName[strlen(new_subject->subjectName) - 1] == '\n') {
-        new_subject->subjectName[strlen(new_subject->subjectName) - 1] = '\0';
-    }
-    fflush(stdin);
+    FILE *file = fopen("resources/subjects.txt", "r");
+    int count = 0;
+    char line[100];
+    int choice = 0;
 
+    printf("Which Subject do you want to add quiz to? \n");
+    while (fgets(line, sizeof(line), file) != NULL) {
+        sscanf(line, "%[^!]!", line);
+        printf("%d. %s\n", count + 1, line);
+        count++;
+    }
+
+    while (1) {
+        printf("Enter the number of the subject: ");
+        if (scanf("%d", &choice) != 1 || choice < 1 || choice > count) {
+            printf("Please enter a valid number between 1 and %d.\n", count);
+            while (getchar() != '\n');
+        } else {
+            break;
+        }
+    }
+
+    count = 0;
+    char scan_line[100];
+    fseek(file, 0, SEEK_SET);
+
+    while (fgets(scan_line, sizeof(scan_line), file) != NULL) {
+        count++;
+        if (count == choice) {
+            sscanf(scan_line, "%[^!]", new_subject->subjectName);
+            fclose(file);
+            break;
+        }
+    }
+
+
+    fflush(stdin);
+    if (strchr(new_subject->subjectName, '!') != NULL) {
+        printf("Error: Subject name cannot contain '!'.\n");
+        return false;
+    }
     // Check if subject exist
+    printf("\nnewsubject: %s\n",new_subject->subjectName);
     if (doesSubjectExist(*new_subject)) {
         sprintf(new_subject->quizFileName, "%s_quizzes.txt", new_subject->subjectName);
         return true;
@@ -79,7 +113,7 @@ struct Quiz getNewQuestion()
 
     {
         struct Quiz new_quiz;
-        printf("\n\nEnter the Question: \n");
+        printf("\n\nEnter the Question (Please end with ?): \n");
         fgets(new_quiz.question, MAX_INPUT_LENGTH, stdin);
 
 

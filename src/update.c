@@ -25,8 +25,10 @@ void updateSubject() {
 
     char quizFileName[MAX_QUIZ_LENGTH];
     char subjectFileName[MAX_SUBJECT_LENGTH];
+
     while (fscanf(subjectsFile, "%[^!]!%s", subjectFileName, quizFileName) == 2) {
         if (strcmp(subject_name, subjectFileName) == 0) {
+            printf("this is the quiz file: %s",quizFileName);
             renderQuestions(quizFileName);
             fclose(subjectsFile);
             return;
