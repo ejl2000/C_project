@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "common.h"
+#include <time.h>
 
 void displayQuestionAndOptions(struct Quiz *quizItems, int index, int itemCount) {
     printf("-------------------------------------------");
@@ -128,6 +129,8 @@ int displaySubjectsAndGetChoice(FILE *subjectsPtr, int numSubjects) {
             printf("Invalid choice. Please enter a valid option.\n");
             while (getchar() != '\n');
         }
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF) { }
     } while (choice < 1 || choice > numSubjects);
 
     return choice;
@@ -155,6 +158,22 @@ void readSelectSubject(FILE *subjectsPtr, char *quizFileName, int fileSize) {
     int choice = displaySubjectsAndGetChoice(subjectsPtr, numSubjects);
     getQuizFileName(subjectsPtr, choice, quizFileName, fileSize);
 }
+void shuffleArray(struct Quiz *array, int size) {
+    if (size > 1) {
+        // Initialize random number generator
+        srand(time(NULL));
+
+        for (int i = size - 1; i > 0; i--) {
+            // Generate a random index from 0 to i
+            int j = rand() % (i + 1);
+
+            // Swap array[i] with array[j]
+            struct Quiz temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
+    }
+}
 
 void startQuiz() {
     FILE* subjectsFilePtr = fopen("resources/subjects.txt", "r");
@@ -179,6 +198,17 @@ void startQuiz() {
     struct Quiz *quizItems;
     int itemCount = loadQuizItems(quizFilePtr, &quizItems);
     fclose(quizFilePtr);
+
+    // Ask the user if they want to shuffle the quiz items
+    printf("\nDo you want to shuffle the quiz questions? (Y/N): ");
+    char shuffleChoice[10];
+    fgets(shuffleChoice, sizeof(shuffleChoice), stdin);
+    shuffleChoice[strcspn(shuffleChoice, "\n")] = 0; // Remove newline character
+
+    // If user chooses to shuffle
+    if (strcmp(shuffleChoice, "Y") == 0) {
+        shuffleArray(quizItems, itemCount);
+    }
 
     readQuizContents(quizItems, itemCount);
 }
