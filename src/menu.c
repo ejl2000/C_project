@@ -120,6 +120,12 @@ struct Quiz getNewQuestion()
         if (new_quiz.question[strlen(new_quiz.question) - 1] == '\n') {
             new_quiz.question[strlen(new_quiz.question) - 1] = '\0';
         }
+        if (new_quiz.question[strlen(new_quiz.question) - 1] != '?') {
+            new_quiz.question[strlen(new_quiz.question)] = '?';
+            if (new_quiz.question[strlen(new_quiz.question)]!='\0'){
+                new_quiz.question[strlen(new_quiz.question)]='\0';
+            }
+        }
 
 
         printf("\nEnter the Question's Answer: \n");

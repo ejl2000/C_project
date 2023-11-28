@@ -40,7 +40,8 @@ void addSubject(struct Subject subject) {
         return;
     }
 
-
+    create_directory("./resources");
+    create_directory("./resources/quizzes");
     FILE* file = fopen(FILE_NAME, "r");
     if (file != NULL) {
         fseek(file, 0, SEEK_END);

@@ -19,4 +19,10 @@ struct Subject {
     char quizFileName[MAX_QUIZ_LENGTH];
 };
 
+
+// Function declaration
+int create_directory(const char *path);
+
+
+
 #endif // COMMON_H

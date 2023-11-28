@@ -200,13 +200,13 @@ void startQuiz() {
     fclose(quizFilePtr);
 
     // Ask the user if they want to shuffle the quiz items
-    printf("\nDo you want to shuffle the quiz questions? (Y/N): ");
+    printf("\nDo you want to shuffle the quiz questions? (y/n): ");
     char shuffleChoice[10];
     fgets(shuffleChoice, sizeof(shuffleChoice), stdin);
     shuffleChoice[strcspn(shuffleChoice, "\n")] = 0; // Remove newline character
 
     // If user chooses to shuffle
-    if (strcmp(shuffleChoice, "Y") == 0) {
+    if (strcmp(shuffleChoice, "y") == 0) {
         shuffleArray(quizItems, itemCount);
     }
 
