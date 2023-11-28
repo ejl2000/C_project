@@ -200,7 +200,7 @@ void menu() {
     char input[3];
 
     do {
-        printf("<< input: '%s' >>\n\n", input);
+//        printf("<< input: '%s' >>\n\n", input);
         mainMenu();
         fgets(input, sizeof(input), stdin);
         input[strcspn(input, "\n")] = 0;
