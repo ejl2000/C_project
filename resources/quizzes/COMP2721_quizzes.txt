@@ -1,5 +1,0 @@
-register?!cpu memory
-cpu?!fetches, decodes, and executes instructions FDE
-alu?!arithmetic/logic
-clock cycle?!how often instruction can be started (memory, cpu, alu, etc)
-bus?!shared path between devices along which data moves (wires)

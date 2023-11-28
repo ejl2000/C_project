@@ -112,7 +112,7 @@ void listQuestions(char *quizFileName) {
         printf("\nQuestion %d: %s\n", questionNumber, currentQuiz.question);
         printf("Answer: %s\n", currentQuiz.answer);
 
-        printf("Do you want to update this question? (y/n): ");
+        printf("Do you want to update this question? (y/n/e): ");
         scanf("%s", option);
         clearInputBuffer();
 
@@ -120,7 +120,7 @@ void listQuestions(char *quizFileName) {
             fclose(quizFile); // Close the file before updating
             updateQuestion(quizFileName, questionNumber);
             questionNumber--; // Stay on the same question number as it's now updated
-        } else if (strcmp(option, "n") != 0) {
+        } else if (strcmp(option, "e") == 0) {
             fclose(quizFile);
             break;
         }
